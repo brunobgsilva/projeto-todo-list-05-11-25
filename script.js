@@ -1,19 +1,40 @@
 const tasks = JSON.parse(localStorage.getItem('tasks')) ?? [];
 
+document.getElementById('check-all-tasks')
+.addEventListener('click', (e) => {
+    const checkbox = e.target; 
+
+    if (checkbox.checked) {
+        tasks.forEach((task) => {
+            task.checkedState = 'checked';
+        });
+    } else {
+        tasks.forEach((task) => {
+            task.checkedState = '';
+        });
+    }
+
+    saveTasksToLocalStorage();
+    renderTasksHTML();
+});
+
 // previne que a pagina recarregue ao pressionar um botao dentro de um formulario
 $('button').on('click', (e) => {
     e.preventDefault();
 });
 
-$('#add-task-button').on('click', (e) => {
+$('#add-task-button').on('click', () => {
     const taskName = $('#task-name-input').val();
     createTask(taskName);
     $('#add-task-modal').modal('hide');
 });
 
 $('#modal-delete-task-button').on('click', (e) => {
-    const taskIdToDelete = $(this).data('task-id');
-    deleteTask(taskIdToDelete);
+    const button = e.target;
+    const taskIdToDelete = $(button).data('task-id');
+    const taskIndexToDelete = findTaskIndexById(taskIdToDelete);
+
+    deleteTaskByIndex(taskIndexToDelete);
     renderTasksHTML();
 });
 
@@ -41,7 +62,8 @@ function createTask(taskName) {
 
 function renderTasksHTML() {
 
-    let tasksHTML = ``;
+    let tasksHTML = `
+    `;
 
     tasks.forEach((task) => {
         
@@ -72,8 +94,8 @@ function renderTasksHTML() {
 
 };
 
-function deleteTask(taskIdToDelete) {
-    tasks.splice(taskIdToDelete, 1);
+function deleteTaskByIndex(taskIndexToDelete) {
+    tasks.splice(taskIndexToDelete, 1);
     saveTasksToLocalStorage();
 };
 
@@ -83,7 +105,7 @@ function addClickEventToCheckboxes() {
 
             let newCheckedState;
             const taskId = parseInt(checkbox.dataset.taskId);
-            const taskIndex = tasks.findIndex((task) => task.id === taskId);
+            const taskIndex = findTaskIndexById(taskId);
 
             checkbox.addEventListener('click', (e) => {
                 if (checkbox.checked) {
@@ -97,12 +119,13 @@ function addClickEventToCheckboxes() {
             });
 
         });
-}
+};
 
 function addClickEventToDeleteButtons() {
     $('.delete-task-button').each((i, button) => {
-        $(this).on('click', (e) => {
+        $(button).on('click', (e) => {
             // pega o data 'task-id' do botão da tarefa e passa pro botão do modal
+            const button = e.target;
             const taskIdToDelete = $(button).data('task-id');
             $('#modal-delete-task-button').data('task-id', taskIdToDelete);
         });
@@ -111,6 +134,11 @@ function addClickEventToDeleteButtons() {
 
 function saveTasksToLocalStorage() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
-}
+};
+
+function findTaskIndexById(taskId) {
+    const taskIndex = tasks.findIndex((task) => task.id === taskId);
+    return taskIndex;
+};
 
 renderTasksHTML();
