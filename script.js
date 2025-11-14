@@ -89,6 +89,7 @@ function renderTasksHTML() {
     });
 
     $('#task-list').html(tasksHTML);
+    updateTaskCounter();
     addClickEventToDeleteButtons();
     addClickEventToCheckboxes();
 
@@ -116,6 +117,7 @@ function addClickEventToCheckboxes() {
                 
                 tasks[taskIndex].checkedState = newCheckedState;
                 saveTasksToLocalStorage();
+                updateTaskCounter();
             });
 
         });
@@ -139,6 +141,22 @@ function saveTasksToLocalStorage() {
 function findTaskIndexById(taskId) {
     const taskIndex = tasks.findIndex((task) => task.id === taskId);
     return taskIndex;
+};
+
+function updateTaskCounter() {
+    let checkedTasks = 0;
+
+    tasks.forEach((task) => {
+        if (task.checkedState === "checked") {
+            checkedTasks++;
+        };
+    });
+
+    $('#task-counter').html(`
+        <span>Tarefas: ${tasks.length}</span>
+        <span class="container mx-2"> | </span>
+        <span>Tarefas concluidas: ${checkedTasks}</span>
+    `);
 };
 
 renderTasksHTML();
