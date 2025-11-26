@@ -23,6 +23,10 @@ $('button').on('click', (e) => {
     e.preventDefault();
 });
 
+$('#theme-button').on('click', () => {
+    changeSiteTheme();
+});
+
 $('#add-task-button').on('click', () => {
     const taskName = $('#task-name-input').val();
     createTask(taskName);
@@ -37,6 +41,38 @@ $('#modal-delete-task-button').on('click', (e) => {
     deleteTaskByIndex(taskIndexToDelete);
     renderTasksHTML();
 });
+
+function changeSiteTheme() {
+    
+    if ($('#theme-button').hasClass('btn-light')) {
+
+        $('#page').removeClass('bg-light');
+        $('#page').addClass('bg-dark');
+        $('#theme-button').removeClass('btn-light');
+        $('#theme-button').addClass('btn-dark');
+
+        $('div').each((i, div) => {
+            $(div).addClass('dark-theme');
+        });
+
+        $('#theme-button').html('&#127769;')
+        
+    } else if ($('#theme-button').hasClass('btn-dark')) {
+
+        $('#page').removeClass('bg-dark');
+        $('#page').addClass('bg-light');
+        $('#theme-button').removeClass('btn-dark');
+        $('#theme-button').addClass('btn-light');
+
+        $('div').each((i, div) => {
+            $(div).removeClass('dark-theme');
+        });
+
+        $('#theme-button').html('&#9728;&#65039;')
+
+    };
+
+};
 
 function createTask(taskName) {
     let taskId;
